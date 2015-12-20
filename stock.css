@@ -8,8 +8,10 @@
 .mhp{display:inline-block;float:right;position:relative;top:.3em}
 .mhp a{padding-right:.6em}
 .mhp a+a{padding-left:.6em;border-left:2px solid #C0C0C0;padding-right:0}
-.tgq{margin:0.5em auto;color:#666;border-collapse:collapse;font-family:Helvetica,Simsun!important}
-.tgq thead{background-color:#D9ECF2;line-height:85%}
+.tgq{margin:0.5em auto;color:#666;border-collapse:collapse;border:1px solid #B0B0B0;font-family:Helvetica,Simsun!important}
+.tgq thead{background-color:#D9ECF2;line-height:90%}
+.tgq tr{border-color:#C0C0C0}
+.tgq th, .tgq td{padding:.2em 1ex;border:1px solid #B0B0B0}
 .buc span[onclick]{cursor:pointer}
 .buc span[onclick]:hover{color:blue}
 .buc span.nwl, .oxc span[onclick]{cursor:default}
