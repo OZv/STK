@@ -224,8 +224,9 @@ class downloader:
         assert i>0
         page = page[i+len(lb):]
         vl = page.replace('"', '').split(',')
-        if len(vl) > 32:
+        if len(vl) > 34:
             close = float(vl[25])
+            close = float(vl[34]) if close==0 else close
             aver = float(vl[26])
             open = float(vl[28])
             high = float(vl[30])
@@ -266,7 +267,7 @@ class downloader:
 
     def __make_tbl(self, curbase):
         th = self.__make_th(curbase)
-        html = ['<table class="tgq" border="1" bordercolor="#C0C0C0" cellpadding="5"><thead>',
+        html = ['<table class="tgq"><thead>',
         '<tr><th rowspan=2>\xe6\x8e\x92\xe5\x90\x8d</th><th rowspan=2>\xe4\xbb\xa3\xe7\xa0\x81</th><th rowspan=2>\xe5\x90\x8d\xe7\xa7\xb0</th><th rowspan=2>\xe6\xb6\xa8\xe5\xb9\x85</th><th rowspan=2>\xe7\x8e\xb0\xe4\xbb\xb7</th>',
         '<th colspan=', str(len(th)), '>\xe7\xb4\xaf\xe7\xa7\xaf\xe6\xb6\xa8\xe5\xb9\x85</th>',
         '<th rowspan=2>\xe8\xa1\x8c\xe4\xb8\x9a</th><th rowspan=2>\xe5\x9c\xb0\xe5\x9f\x9f</th></tr><tr id="tb8">']
