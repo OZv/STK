@@ -1,0 +1,22 @@
+.buc{margin:0.5em auto;display:table;color:#888}
+.buc a{text-decoration:none}
+.l7s{display:inline-block;text-align:right}
+.l7s span{display:inline-block;font-weight:bold;width:5em;padding:.1em 0 .15em;text-align:center;border:1px #4AB0EF solid;-webkit-user-select:none}
+.l7s span+span{border-left:none}
+.nwl{background-color:#50BFFF;color:white}
+.sk7{display:inline-block;margin:0 1.3em;font-weight:bold}
+.mhp{display:inline-block;float:right;position:relative;top:.3em}
+.mhp a{padding-right:.6em}
+.mhp a+a{padding-left:.6em;border-left:2px solid #C0C0C0;padding-right:0}
+.tgq{margin:0.5em auto;color:#666;border-collapse:collapse;font-family:Helvetica,Simsun!important}
+.tgq thead{background-color:#D9ECF2;line-height:85%}
+.buc span[onclick]{cursor:pointer}
+.buc span[onclick]:hover{color:blue}
+.buc span.nwl, .oxc span[onclick]{cursor:default}
+.buc span.nwl:hover{color:white}
+.czx{color:green}
+.yuv, .oxc, .oxc span[onclick]:hover{color:red}
+.psz{}
+.jyn{text-align:right}
+.buc tbody tr:hover{background-color:#FAFA82}
+.ukr{text-align:center;font-family:Simsun}
