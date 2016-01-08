@@ -372,6 +372,9 @@ class downloader:
             if base > 3:
                 self.__gen_html(base, day, pre, nxt)
                 pre = day
+        dump(''.join(['<html><head><meta http-equiv="refresh" content="0;url=', self.__day,
+        '.html"><link rel="shortcut icon" href="favicon.png" type="image/x-png"></head></html>']),
+        ''.join([self.hdir, 'index.html']))
 
 if __name__=="__main__":
     import sys
