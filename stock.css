@@ -1,6 +1,6 @@
 .buc{margin:0.5em auto;display:table;color:#888}
 .buc a{text-decoration:none}
-.l7s{display:inline-block;text-align:right}
+.l7s{display:inline-block;text-align:right;margin-top:.3em}
 .l7s span{display:inline-block;font-weight:bold;width:5em;padding:.1em 0 .15em;text-align:center;border:1px #4AB0EF solid;-webkit-user-select:none}
 .l7s span+span{border-left:none}
 .nwl{background-color:#50BFFF;color:white}
@@ -15,9 +15,13 @@
 .buc span[onclick]:hover{color:blue}
 .buc span.nwl, .oxc span[onclick]{cursor:default}
 .buc span.nwl:hover{color:white}
-.czx{color:green}
 .yuv, .oxc, .oxc span[onclick]:hover{color:red}
 .psz{}
 .jyn{text-align:right}
 .buc tbody tr:hover{background-color:#FAFA82}
 .ukr{text-align:center;font-family:Simsun}
+.qgi{margin-right:1em;font-weight:bold}
+.qgi:before{content:"\02022";font-weight:normal}
+.ixp,.ixm{margin-right:.8em;color:red;font-family:Helvetica}
+.czx,.ixm{color:green}
+.qgd{text-align:right}
