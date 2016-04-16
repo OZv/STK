@@ -68,6 +68,7 @@ def getcodelist(file, base_dir=''):
         text = p.sub('\n', text).strip()
         codes = OrderedDict()
         for code in text.split('\n'):
+#            print code
             c, n, m, d = code.split('\t')
             codes[c] = (n, m, d)
         return codes
@@ -319,7 +320,11 @@ class downloader:
             for ol in ml:
                 for od in ol:
                     if not od in dc:
-                        dc[od] = [getchg(data[od][1], data_s1[od][1]), data[od][1]]
+                        if od in data_s1:
+                            chg = getchg(data[od][1], data_s1[od][1])
+                        else:
+                            chg = 0
+                        dc[od] = [chg, data[od][1]]
                         dc[od].extend(codes[od])
         vc = ''.join(['var vc=', json.dumps(dc, separators=(',', ':')), ';\n'])
         vo = ''.join(['var vo=', json.dumps(order, separators=(',', ':')), ';\n'])
