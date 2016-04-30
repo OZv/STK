@@ -340,7 +340,7 @@ class downloader:
         vo = ''.join(['var vo=', json.dumps(order, separators=(',', ':')), ';\n'])
         return [vc, vo]
 
-    def __make_if(self, day):
+    def __make_if(self, base, day):
         js = getpage('http://datapic.eastmoney.com/IF/js/VFData.js')
         cv = re.compile(r'var cv\s*=\s*(.+?);', re.I).search(js).group(1)
         mkt = json.loads(unicode(fmt_js(cv), errors='ignore'))[0]['value']
@@ -349,9 +349,12 @@ class downloader:
         base_url = ''.join(['http://datainterface.eastmoney.com/EM_DataCenter/JS.aspx?type=QHCC&sty=QHSYCC&stat=3&mkt=',
         mkt, '&fd=', day, '&code='])
         contrs = OrderedDict()
+        p = re.compile(r'stats\s*:\s*false', re.I)
         for cd in cdl:
             js = getpage(cd[0], base_url)
             js = re.compile(r'\(\[(.+?)\]\)\s*$', re.I).search(js).group(1)
+            if p.search(js):
+                continue
             data = json.loads(js, encoding='utf-8')
             ln = get_f(data[u'\u591a\u5934\u6301\u4ed3\u9f99\u864e\u699c'][0])
             aln = get_f(data[u'\u51c0\u591a\u5934\u9f99\u864e\u699c'][0], -1)
@@ -361,7 +364,8 @@ class downloader:
             ln.extend(aln)
             ln.extend(ast)
             contrs[cd[0].upper()] = ln
-        dump(''.join(['var ft=', json.dumps(contrs, separators=(',', ':')), ';\n']), ''.join([self.fdir, str(self.__base), '.js']))
+        if contrs:
+            dump(''.join(['var ft=', json.dumps(contrs, separators=(',', ':')), ';\n']), ''.join([self.fdir, str(base), '.js']))
 
     def __gen_html(self, base, day, pre, nxt):
         fh = ''.join([self.hdir, day, '.html'])
@@ -402,7 +406,6 @@ class downloader:
         for i in xrange(len(self.__index)):
             day = days[i]
             if day == self.__day:
-                self.__make_if(re.compile('(\d{2})(\d{2})(\d{2})_\w{3}').sub(r'20\1-\2-\3', day))
                 nxt = datetime.datetime.strptime(day, '%y%m%d_%a').date() + datetime.timedelta(1)
                 if nxt.weekday() > 4:
                     nxt = nxt + datetime.timedelta(7-nxt.weekday())
@@ -411,6 +414,7 @@ class downloader:
                 nxt = days[i+1]
             base = int(self.__index[day])
             if base > 3:
+                self.__make_if(base, re.compile('(\d{2})(\d{2})(\d{2})_\w{3}').sub(r'20\1-\2-\3', day))
                 self.__gen_html(base, day, pre, nxt)
                 pre = day
         dump(''.join(['<html><head><meta http-equiv="refresh" content="0;url=', self.__day,
