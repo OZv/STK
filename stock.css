@@ -1,11 +1,13 @@
 .buc{margin:0.5em auto;display:table;color:#888}
 .buc a{text-decoration:none}
-.l7s{display:inline-block;text-align:right;margin-top:.3em}
+.d3z{clear:both;margin-top:.3em}
+.l7s{display:inline-block;text-align:right;margin-top:.3em;clear:both}
 .l7s span{display:inline-block;font-weight:bold;width:5em;padding:.1em 0 .15em;text-align:center;border:1px #4AB0EF solid;-webkit-user-select:none}
 .l7s span+span{border-left:none}
 .nwl{background-color:#50BFFF;color:white}
 .sk7{display:inline-block;margin:0 1.3em;font-weight:bold}
-.mhp{display:inline-block;float:right;position:relative;top:.3em}
+.mhp, .fed{float:right}
+.mhp{display:inline-block;position:relative;top:.3em}
 .mhp a{padding-right:.6em}
 .mhp a+a{padding-left:.6em;border-left:1px solid #C0C0C0;padding-right:0}
 .tgq{margin:0.5em auto;color:#666;border-collapse:collapse;border:1px solid #B0B0B0;font-family:Helvetica,Simsun!important}
@@ -17,11 +19,13 @@
 .buc span.nwl:hover{color:white}
 .yuv, .oxc, .oxc span[onclick]:hover{color:red}
 .psz{}
-.jyn{text-align:right}
-.buc tbody tr:hover{background-color:#FAFA82}
+.jyn, .aqn, .qgd, .b18{text-align:right}
+#ttg tr:hover{background-color:#FAFA82}
 .ukr{text-align:center;font-family:Simsun}
 .qgi{margin-right:1em;font-weight:bold}
 .qgi:before{content:"\02022";font-weight:normal}
 .ixp,.ixm{margin-right:.8em;color:red;font-family:Helvetica}
 .czx,.ixm{color:green}
-.qgd{text-align:right}
+.fed{color:#666;font-weight:bold}
+.aqn, .vvn{font-family:Helvetica;font-weight:normal}
+.b18{width:3.5em}
