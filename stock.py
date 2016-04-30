@@ -116,11 +116,21 @@ def getchg(c, o):
     return round((c-o)*100/o, 2)
 
 
+def fmt_js(js):
+    return re.compile('(\w+)(?=:)').sub(r'"\1"', js).replace('\'', '"')
+
+
+def get_f(ls, off=0):
+    v = ls.split(',')
+    return [int(v[5]), int(v[7+off])]
+
+
 class downloader:
 #download data
     def __init__(self, name, codes):
         self.dir = ''.join([name, path.sep])
         self.hdir = ''.join([self.dir, 'html', path.sep])
+        self.fdir = ''.join([self.dir, 'if', path.sep])
         self.__codes = codes
         self.base_url = 'http://nuff.eastmoney.com/EM_Finance2015TradeInterface/JS.ashx?id='
 
@@ -273,7 +283,7 @@ class downloader:
         '<th colspan=', str(len(th)), '>\xe7\xb4\xaf\xe7\xa7\xaf\xe6\xb6\xa8\xe5\xb9\x85</th>',
         '<th rowspan=2>\xe8\xa1\x8c\xe4\xb8\x9a</th><th rowspan=2>\xe5\x9c\xb0\xe5\x9f\x9f</th></tr><tr id="tb8">']
         html.extend(th)
-        html.append('</tr></thead><tbody></tbody></table>')
+        html.append('</tr></thead><tbody id="ttg"></tbody></table>')
         return html
 
     def __calc_chg(self, codes, data, data_s):
@@ -330,16 +340,40 @@ class downloader:
         vo = ''.join(['var vo=', json.dumps(order, separators=(',', ':')), ';\n'])
         return [vc, vo]
 
+    def __make_if(self, day):
+        js = getpage('http://datapic.eastmoney.com/IF/js/VFData.js')
+        cv = re.compile(r'var cv\s*=\s*(.+?);', re.I).search(js).group(1)
+        mkt = json.loads(unicode(fmt_js(cv), errors='ignore'))[0]['value']
+        cc = re.compile(r'var cc\s*=\s*(.+?);', re.I).search(js).group(1)
+        cdl = json.loads(unicode(fmt_js(cc), errors='ignore'))[1]['data']
+        base_url = ''.join(['http://datainterface.eastmoney.com/EM_DataCenter/JS.aspx?type=QHCC&sty=QHSYCC&stat=3&mkt=',
+        mkt, '&fd=', day, '&code='])
+        contrs = OrderedDict()
+        for cd in cdl:
+            js = getpage(cd[0], base_url)
+            js = re.compile(r'\(\[(.+?)\]\)\s*$', re.I).search(js).group(1)
+            data = json.loads(js, encoding='utf-8')
+            ln = get_f(data[u'\u591a\u5934\u6301\u4ed3\u9f99\u864e\u699c'][0])
+            aln = get_f(data[u'\u51c0\u591a\u5934\u9f99\u864e\u699c'][0], -1)
+            st = get_f(data[u'\u7a7a\u5934\u6301\u4ed3\u9f99\u864e\u699c'][0])
+            ast = get_f(data[u'\u51c0\u7a7a\u5934\u9f99\u864e\u699c'][0], -1)
+            ln.extend(st)
+            ln.extend(aln)
+            ln.extend(ast)
+            contrs[cd[0].upper()] = ln
+        dump(''.join(['var ft=', json.dumps(contrs, separators=(',', ':')), ';\n']), ''.join([self.fdir, str(self.__base), '.js']))
+
     def __gen_html(self, base, day, pre, nxt):
         fh = ''.join([self.hdir, day, '.html'])
         if path.exists(fullpath(fh)):
             return
         html = ['<html><head><meta http-equiv="content-type" content="text/html;charset=utf-8">',
         '<link rel="stylesheet" href="stock.css" type="text/css"><script type="text/javascript" src="func.js"></script>',
-        '<script type="text/javascript" src="code.js"></script><script type="text/javascript">']
+        '<script type="text/javascript" src="code.js"></script><script type="text/javascript" src="../if/',
+        str(base), '.js"></script><script type="text/javascript">']
         html.extend(self.__make_js(base))
         html.extend(['</script></head><body><div class="buc">',
-        '<div class="l7s"><span class="nwl" onclick="k9y(this,0);">\xe6\xb2\xaa\xe6\xb7\xb1</span>',
+        '<div class="d3z"><div class="l7s"><span class="nwl" onclick="k9y(this,0);">\xe6\xb2\xaa\xe6\xb7\xb1</span>',
         '<span onclick="k9y(this,1);">\xe6\xb2\xaa\xe5\xb8\x82</span>',
         '<span onclick="k9y(this,2);">\xe6\xb7\xb1\xe5\xb8\x82</span></div>',
         '<div class="sk7">', re.compile('(\d{2})(\d{2})(\d{2})_(\w{3})').sub(r'20\1/\2/\3, \4', day), '</div>',
@@ -349,7 +383,7 @@ class downloader:
         else:
             LK = ''.join(['<span>%s</span><a href="', nxt, '.html">%s</a>'])
         html.append(LK % ('&lt;&lt;\xe5\x89\x8d\xe4\xb8\x80\xe5\xa4\xa9', '\xe5\x90\x8e\xe4\xb8\x80\xe5\xa4\xa9&gt;&gt;'))
-        html.append('</div>')
+        html.append('</div></div>')
         html.extend(self.__make_tbl(base))
         html.append('</div></body></html>')
         dump(''.join(html), fh)
@@ -357,16 +391,18 @@ class downloader:
     def format(self):
         if not path.exists(fullpath(self.hdir)):
             os.mkdir(fullpath(self.hdir))
+        if not path.exists(fullpath(self.fdir)):
+            os.mkdir(fullpath(self.fdir))
         fc = ''.join([self.hdir, 'code.js'])
-        if not path.exists(fullpath(fc)):
-            db = OrderedDict()
-            for code, v in self.__codes.iteritems():
-                db[code] = [v[0], v[1], v[2]]
-            dump(''.join(['var cl=', json.dumps(db, separators=(',', ':'), ensure_ascii=False), ';']), fc)
+        db = OrderedDict()
+        for code, v in self.__codes.iteritems():
+            db[code] = [v[0], v[1], v[2]]
+        dump(''.join(['var cl=', json.dumps(db, separators=(',', ':'), ensure_ascii=False), ';']), fc)
         days, pre, next = self.__index.keys(), '', ''
         for i in xrange(len(self.__index)):
             day = days[i]
             if day == self.__day:
+                self.__make_if(re.compile('(\d{2})(\d{2})(\d{2})_\w{3}').sub(r'20\1-\2-\3', day))
                 nxt = datetime.datetime.strptime(day, '%y%m%d_%a').date() + datetime.timedelta(1)
                 if nxt.weekday() > 4:
                     nxt = nxt + datetime.timedelta(7-nxt.weekday())
